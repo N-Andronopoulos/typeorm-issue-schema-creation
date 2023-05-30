@@ -47,13 +47,15 @@ export class AppController implements OnApplicationBootstrap {
 
   onApplicationBootstrap(): void {
     const newOrders = [...Array(25)]
-      .map(foo => {
-        const obj = new OrderEntity(foo);
-        obj.items = [...Array(2)].map(bar => new ItemEntity(bar));
+      .map((_, idx) => {
+        const obj = new OrderEntity(idx);
+        obj.items = [...Array(15)].map((_, idx2) => new ItemEntity(idx2));
         return obj;
       });
 
     // Fill with data
+    // And I should get 5 result with 25 total items...
+    // ...but I get only 1 ??!
     this.orderRepo
       .save(newOrders)
       .then(res => {
@@ -64,11 +66,16 @@ export class AppController implements OnApplicationBootstrap {
           },
           order: {
             created: "DESC",
+            // This is the issue:
+            // When I add the ordering of relation it behaves
+            // weirdly and I think It should not....
             items: {
               created: "DESC"
             }
-          }
-        }).then(console.log);
+          },
+          skip: 0,
+          take: 5,
+        }).then(console.log); // I should get 5 results not 1 :/ !
       });
   }
 }
@@ -84,6 +91,7 @@ export class AppController implements OnApplicationBootstrap {
       password: "testIssue",
       database: "testDb",
       synchronize: true,
+      dropSchema: true,
       logging: true,
       autoLoadEntities: true
     }),
