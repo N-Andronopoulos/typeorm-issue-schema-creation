@@ -91,7 +91,6 @@ export class AppController implements OnApplicationBootstrap {
       password: "testIssue",
       database: "testDb",
       synchronize: true,
-      dropSchema: true,
       logging: true,
       autoLoadEntities: true
     }),
